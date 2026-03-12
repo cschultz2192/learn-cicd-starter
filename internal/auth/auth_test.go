@@ -3,7 +3,6 @@ package auth
 import (
 	"errors"
 	"net/http"
-	"reflect"
 	"testing"
 )
 
@@ -50,12 +49,17 @@ func TestAuth(t *testing.T) {
 
 	for _, tc := range tests {
 		got, err := GetAPIKey(tc.headers)
-		if !reflect.DeepEqual(got, tc.expectedErr) {
-			t.Fatalf("expected: %v, got: %v", tc.expectedKey, got)
+		if got != tc.expectedKey {
+			t.Fatalf("\nname: %v\nexpected: %v, got: %v", tc.name, tc.expectedKey, got)
 		}
-		if err == tc.expectedErr {
-			t.Fatalf("expectedErr: %v, gotErr: %v", tc.expectedErr, err)
+		if tc.expectedErr == nil && err != nil {
+			t.Fatalf("\nname: %v\nexpectedErr: nil, gotErr: %v", tc.name, err)
+		}
+		if tc.expectedErr != nil && err == nil {
+			t.Fatalf("\nname: %v\nexpectedErr: %v, gotErr: nil", tc.name, tc.expectedErr)
+		}
+		if tc.expectedErr != nil && err != nil && err.Error() != tc.expectedErr.Error() {
+			t.Fatalf("\nname: %v\nexpectedErr: %v, gotErr: %v", tc.name, tc.expectedErr, err)
 		}
 	}
-
 }
