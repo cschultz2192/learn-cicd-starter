@@ -40,5 +40,5 @@ jobs:
         run: test -z $(go fmt ./...)
 
       - name: Linter
-        run: staticchecck ./...
+        run: staticcheck ./...
 
